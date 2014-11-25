@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.apache.commons.math3.distribution.IntegerDistribution;
-import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
@@ -18,25 +16,26 @@ import org.eclipse.emf.ecore.resource.Resource;
 import com.google.common.collect.ImmutableSet;
 
 import fr.inria.atlanmod.instantiator.ISpecimenConfiguration;
+import fr.inria.atlanmod.instantiator.util.UniformLongDistribution;
 
 public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 
 	protected long seed = 0L;
-	protected int numberOfProperties;
-	protected int numberOfElements;
+	protected long numberOfProperties;
+	protected long numberOfElements;
 	protected Random random;
 	protected String rootElement;
 
-	protected int inferNumberOfPropertiesPerClassesNumber(int numberOfElements) {
-		int result = (int) Math.pow(numberOfElements, 1 / 3);
+	protected long inferNumberOfPropertiesPerClassesNumber(long numberOfElements) {
+		long result = (long) Math.pow(numberOfElements, 1 / 3);
 		while (propertiesEquation(result) < numberOfElements) {
 			result++;
 		}
 		return result - 1;
 	}
 
-	private int propertiesEquation(int result) {
-		int res = result + 1;
+	private long propertiesEquation(long result) {
+		long res = result + 1;
 		res += Math.pow(result, 3);
 		res += Math.pow(result, 2);
 		return res;
@@ -46,23 +45,24 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 		this.rootElement = rootElement;
 	}
 
+	@Override
 	public long getSeed() {
 		return seed;
 	}
 
-	public int getNumberOfProperties() {
+	public long getNumberOfProperties() {
 		return numberOfProperties;
 	}
 
-	public void setNumberOfProperties(int numberOfProperties) {
+	public void setNumberOfProperties(long numberOfProperties) {
 		this.numberOfProperties = numberOfProperties;
 	}
 
-	public int getNumberOfElements() {
+	public long getNumberOfElements() {
 		return numberOfElements;
 	}
 
-	public void setNumberOfElements(int numberOfElements) {
+	public void setNumberOfElements(long numberOfElements) {
 		this.numberOfElements = numberOfElements;
 	}
 
@@ -115,9 +115,9 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 			if (eo instanceof EClass && ((EClass) eo).getName().equals(rootElement)) {
 				// "System" the root element
 				EClass ec = (EClass) eo;
-				if (!ec.isAbstract())
+				if (!ec.isAbstract()) {
 					ret.add(ec);
-				else {
+				} else {
 					addPossibleRootSubClasses(ret, allClasses, ec);
 				}
 			}
@@ -142,8 +142,9 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 			if (!eCls.getESuperTypes().isEmpty()) {
 				if (eCls.getESuperTypes().contains(ec)) {
 					if (!eCls.isAbstract() && isNotComposite(eCls)) {
-						if (!ret.contains(eCls))
+						if (!ret.contains(eCls)) {
 							ret.add(eCls);
+						}
 					} else {
 						addPossibleRootSubClasses(ret, subClasses, eCls);
 					}
@@ -154,8 +155,9 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 
 	private boolean isNotComposite(EClass eCls) {
 		for (EReference eReference : eCls.getEAllReferences()) {
-			if (eReference.isContainer())
+			if (eReference.isContainer()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -167,19 +169,20 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 			EObject eo = (EObject) i.next();
 			if (eo.eClass().getName().equals("EClass")) {
 				EClass ec = (EClass) eo;
-				if (ec.isAbstract())
+				if (ec.isAbstract()) {
 					ret.add(ec);
+				}
 			}
 		}
 		return ImmutableSet.copyOf(ret);
 	}
 
-	public int getMaxClasses() {
+	public long getMaxClasses() {
 
 		return numberOfElements;
 	}
 
-	public int getMaxProperties() {
+	public long getMaxProperties() {
 		return numberOfProperties == 0 ? inferNumberOfPropertiesPerClassesNumber(numberOfElements) : numberOfProperties;
 	}
 
@@ -194,10 +197,10 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 	// }
 
 	@Override
-	public IntegerDistribution getRootDistributionFor(EClass rootEClass) {
+	public UniformLongDistribution getRootDistributionFor(EClass rootEClass) {
 		// In case the metamodel has one possible root Metaclass, it is rather
 		// better to return a distributon
-		IntegerDistribution x = new UniformIntegerDistribution(numberOfProperties - 1, numberOfProperties);
+		UniformLongDistribution x = new UniformLongDistribution(numberOfProperties - 1, numberOfProperties);
 		x.reseedRandomGenerator(random.nextLong());
 		return x;
 	}
@@ -209,13 +212,13 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 	 * #getResourceSizeDistribution(org.eclipse.emf.ecore.EClass)
 	 */
 	@Override
-	public IntegerDistribution getResourceSizeDistribution(EClass eClass) {
+	public UniformLongDistribution getResourceSizeDistribution(EClass eClass) {
 		String className = eClass.getName();
-		IntegerDistribution x = null;
+		UniformLongDistribution x = null;
 		if (className.equals("String") || className.equals("Integer") || className.equals("Boolean")) {
-			x = new UniformIntegerDistribution(numberOfElements, numberOfElements);
+			x = new UniformLongDistribution(numberOfElements, numberOfElements);
 		} else {
-			x = new UniformIntegerDistribution(numberOfElements - 1, numberOfElements);
+			x = new UniformLongDistribution(numberOfElements - 1, numberOfElements);
 		}
 
 		x.reseedRandomGenerator(random.nextLong());
@@ -224,8 +227,8 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 	}
 
 	@Override
-	public IntegerDistribution getDistributionFor(EReference eReference) {
-		IntegerDistribution x = new UniformIntegerDistribution(eReference.getLowerBound(), numberOfProperties);
+	public UniformLongDistribution getDistributionFor(EReference eReference) {
+		UniformLongDistribution x = new UniformLongDistribution(eReference.getLowerBound(), numberOfProperties);
 		x.reseedRandomGenerator(random.nextLong());
 
 		return x;
@@ -237,15 +240,15 @@ public class DefaultGeneratorConfiguration implements ISpecimenConfiguration {
 	}
 
 	@Override
-	public IntegerDistribution getDistributionFor(EAttribute eAttribute) {
-		IntegerDistribution x = new UniformIntegerDistribution(eAttribute.getLowerBound(), numberOfProperties);
+	public UniformLongDistribution getDistributionFor(EAttribute eAttribute) {
+		UniformLongDistribution x = new UniformLongDistribution(eAttribute.getLowerBound(), numberOfProperties);
 		x.reseedRandomGenerator(random.nextLong());
 
 		return x;
 	}
 
 	@Override
-	public IntegerDistribution getDepthDistributionFor(EClass eClass) {
-		return new UniformIntegerDistribution(numberOfProperties - 1, numberOfProperties);
+	public UniformLongDistribution getDepthDistributionFor(EClass eClass) {
+		return new UniformLongDistribution(numberOfProperties - 1, numberOfProperties);
 	}
 }

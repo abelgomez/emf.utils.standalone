@@ -29,7 +29,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.math3.distribution.IntegerDistribution;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
@@ -49,6 +48,7 @@ import fr.inria.atlanmod.instantiator.exceptions.GenerationException;
 import fr.inria.atlanmod.instantiator.impl.DefaultModelGenerator;
 import fr.inria.atlanmod.instantiator.internal.EPackagesData;
 import fr.inria.atlanmod.instantiator.internal.Gpw;
+import fr.inria.atlanmod.instantiator.util.UniformLongDistribution;
 
 /**
  * @author <a href="mailto:mikael.barbero@obeo.fr">Mikael Barbero</a>
@@ -67,8 +67,8 @@ public class SpecimenGenerator {
 	protected final EPackagesData ePackagesData;
 
 	/* inner Variable state */
-	private int currentDepth;
-	private int currentMaxDepth;
+	private long currentDepth;
+	private long currentMaxDepth;
 
 	public static void main(String[] args) throws GenerationException {
 
@@ -92,8 +92,8 @@ public class SpecimenGenerator {
 				modelGen.setSetSize(new int[] { models });
 			}
 			if (commandLine.hasOption(SIZE)) {
-				int size = ((Number) commandLine.getParsedOptionValue(SIZE)).intValue();
-				modelGen.setModelsSize(new int[] { size });
+				long size = ((Number) commandLine.getParsedOptionValue(SIZE)).longValue();
+				modelGen.setModelsSize(new long[] { size });
 			}
 			if (commandLine.hasOption(SEED)) {
 				long seed = ((Number) commandLine.getParsedOptionValue(SEED)).longValue();
@@ -170,7 +170,7 @@ public class SpecimenGenerator {
 
 		for (EClass eClass : c.possibleRootEClasses()) {
 			currentMaxDepth = c.getDepthDistributionFor(eClass).sample();
-			int nbInstance = c.getRootDistributionFor(eClass).sample();
+			long nbInstance = c.getRootDistributionFor(eClass).sample();
 			for (int i = 0; i < nbInstance; i++) {
 
 				Optional<EObject> generateEObject = generateEObject(eClass, indexByKind);
@@ -190,7 +190,7 @@ public class SpecimenGenerator {
 			}
 		}
 
-		Map<EClass, Integer> resourcesSize = newHashMap();
+		Map<EClass, Long> resourcesSize = newHashMap();
 		for (EClass eClass : c.possibleRootEClasses()) {
 			setNextResourceSizeForType(resourcesSize, eClass);
 		}
@@ -198,9 +198,9 @@ public class SpecimenGenerator {
 		return ret;
 	}
 
-	private void setNextResourceSizeForType(Map<EClass, Integer> resourcesSize, EClass eClass) {
-		IntegerDistribution sizeDistribution = c.getResourceSizeDistribution(eClass);
-		int desiredSize = sizeDistribution.sample();
+	private void setNextResourceSizeForType(Map<EClass, Long> resourcesSize, EClass eClass) {
+		UniformLongDistribution sizeDistribution = c.getResourceSizeDistribution(eClass);
+		long desiredSize = sizeDistribution.sample();
 		resourcesSize.put(eClass, desiredSize);
 	}
 
@@ -212,11 +212,11 @@ public class SpecimenGenerator {
 		Iterable<EReference> eAllNonContainment = ePackagesData.eAllNonContainment(eObject.eClass());
 		for (EReference eReference : eAllNonContainment) {
 			EClass eReferenceType = eReference.getEReferenceType();
-			IntegerDistribution distribution = c.getDistributionFor(eReference);
+			UniformLongDistribution distribution = c.getDistributionFor(eReference);
 			if (eReference.isMany()) {
 				@SuppressWarnings("unchecked")
 				List<Object> values = (List<Object>) eObject.eGet(eReference);
-				int sample;
+				long sample;
 				do {
 					sample = distribution.sample();
 				} while (sample < eReference.getLowerBound());
@@ -299,7 +299,7 @@ public class SpecimenGenerator {
 	private void generateSingleContainmentReference(EObject eObject, EReference eReference, ListMultimap<EClass, EObject> indexByKind,
 			ImmutableMultiset<EClass> eAllConcreteSubTypesOrSelf) {
 		// DONE look if the lowerbound is 1
-		IntegerDistribution distribution = c.getDistributionFor(eReference);
+		UniformLongDistribution distribution = c.getDistributionFor(eReference);
 		if (eReference.getLowerBound() != 0 || booleanInDistribution(distribution)) {// eReference.getLowerBound()
 																						// ==
 																						// 1
@@ -314,10 +314,10 @@ public class SpecimenGenerator {
 	private void generateManyContainmentReference(EObject eObject, EReference eReference, ListMultimap<EClass, EObject> indexByKind,
 			ImmutableMultiset<EClass> eAllConcreteSubTypesOrSelf) {
 		// DONE look if the lowerbound is 1
-		IntegerDistribution distribution = c.getDistributionFor(eReference);
+		UniformLongDistribution distribution = c.getDistributionFor(eReference);
 		@SuppressWarnings("unchecked")
 		List<EObject> values = (List<EObject>) eObject.eGet(eReference);
-		int sample;
+		long sample;
 		do {
 			sample = distribution.sample();
 		} while (sample < eReference.getLowerBound());
@@ -350,7 +350,7 @@ public class SpecimenGenerator {
 	}
 
 	private void generateAttributes(EObject eObject, EAttribute eAttribute) {
-		IntegerDistribution distribution = c.getDistributionFor(eAttribute);
+		UniformLongDistribution distribution = c.getDistributionFor(eAttribute);
 		EDataType eAttributeType = eAttribute.getEAttributeType();
 		Class<?> instanceClass = eAttributeType.getInstanceClass();
 		// System.out.println(eAttribute.getName());
@@ -361,7 +361,7 @@ public class SpecimenGenerator {
 		}
 	}
 
-	private void generateSingleAttribute(EObject eObject, EAttribute eAttribute, IntegerDistribution distribution, Class<?> instanceClass) {
+	private void generateSingleAttribute(EObject eObject, EAttribute eAttribute, UniformLongDistribution distribution, Class<?> instanceClass) {
 		boolean bool = booleanInDistribution(distribution);
 		// DONE look if the lowerbound is 1
 		if (eAttribute.getLowerBound() != 0 || bool) {// eAttribute.getLowerBound()
@@ -371,11 +371,11 @@ public class SpecimenGenerator {
 		}
 	}
 
-	private void generateManyAttribute(EObject eObject, EAttribute eAttribute, IntegerDistribution distribution, Class<?> instanceClass) {
+	private void generateManyAttribute(EObject eObject, EAttribute eAttribute, UniformLongDistribution distribution, Class<?> instanceClass) {
 		// DONE look if the lowerbound is 1
 		@SuppressWarnings("unchecked")
 		List<Object> values = (List<Object>) eObject.eGet(eAttribute);
-		int lowerbound;
+		long lowerbound;
 		do {
 			lowerbound = distribution.sample();
 		} while (lowerbound < eAttribute.getLowerBound());
@@ -446,8 +446,8 @@ public class SpecimenGenerator {
 		}
 	}
 
-	private boolean booleanInDistribution(IntegerDistribution distribution) {
-		int sample = distribution.sample();
+	private boolean booleanInDistribution(UniformLongDistribution distribution) {
+		long sample = distribution.sample();
 		// System.out.println(sample < distribution.getNumericalMean());
 		return sample < distribution.getNumericalMean();
 	}

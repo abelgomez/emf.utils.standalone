@@ -32,7 +32,7 @@ public class DefaultModelGenerator {
 	//
 	// protected int[] setSize = {3,3,3}; // the number of generated models per
 	// model' size
-	protected int[] modelsSize = { 1000 }; // this size includes model objects
+	protected long[] modelsSize = { 1000 }; // this size includes model objects
 											// and properties
 
 	protected int[] setSize = { 1 }; // the number of generated models per
@@ -45,11 +45,11 @@ public class DefaultModelGenerator {
 
 	protected String rootElement;//
 
-	public int[] getModelsSize() {
+	public long[] getModelsSize() {
 		return modelsSize;
 	}
 
-	public void setModelsSize(int[] modelsSize) {
+	public void setModelsSize(long[] modelsSize) {
 		this.modelsSize = modelsSize;
 	}
 
@@ -190,16 +190,16 @@ public class DefaultModelGenerator {
 		modelExtension = newModelExtension;
 	}
 
-	protected int inferNumberOfProperties(int numberOfElements) {
-		int result = (int) Math.pow(numberOfElements, 1 / 3);
+	protected long inferNumberOfProperties(long numberOfElements) {
+		long result = (long) Math.pow(numberOfElements, 1 / 3);
 		while (propertiesEquation(result) < numberOfElements) {
 			result++;
 		}
 		return result - 1;
 	}
 
-	private int propertiesEquation(int result) {
-		int res = result + 1;
+	private long propertiesEquation(long result) {
+		long res = result + 1;
 		res += Math.pow(result, 3);
 		res += Math.pow(result, 2);
 		return res;
@@ -227,7 +227,7 @@ public class DefaultModelGenerator {
 			generator = new SpecimenGenerator(genModelConf);
 			int loop = modelsSize.length > setSize.length ? setSize.length : modelsSize.length;
 			for (int i = 0; i < loop; i++) {
-				int numberOfElements = modelsSize[i];
+				long numberOfElements = modelsSize[i];
 				for (int j = 0; j < setSize[i]; j++) {
 					genModelConf.setNumberOfElements(numberOfElements);
 					genModelConf.setNumberOfProperties(inferNumberOfProperties(numberOfElements));// base
@@ -246,7 +246,7 @@ public class DefaultModelGenerator {
 		}
 	}
 
-	private void saveModel(int maxElements, int index, List<EObject> generatedObjects) throws GenerationException {
+	private void saveModel(long maxElements, int index, List<EObject> generatedObjects) throws GenerationException {
 		Resource resource = new ResourceSetImpl().createResource(formatURI(getMetaModelName(), maxElements, index));
 		System.gc();
 		for (EObject eo : generatedObjects) {
@@ -267,7 +267,7 @@ public class DefaultModelGenerator {
 		return MMURI == null ? "test" : MMURI.lastSegment().substring(0, MMURI.lastSegment().indexOf("."));
 	}
 
-	private URI formatURI(String metaModelName, int maxElement, int index) {
+	private URI formatURI(String metaModelName, long maxElement, int index) {
 		return URI.createFileURI(
 				(samplesPath != null ? samplesPath.toString() : "data" + File.separator + "samples" )
 				+ File.separator
