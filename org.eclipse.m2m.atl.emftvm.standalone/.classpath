@@ -21,8 +21,8 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.m2m.atl.emftvm.trace_3.5.0.v201405260755.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.10.0.v20140606-1445.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi.compatibility.state_1.0.0.v20140403-1907.jar"/>
-	<classpathentry kind="lib" path="lib/org.objectweb.asm_5.0.1.v201404251740.jar"/>
 	<classpathentry kind="lib" path="lib/runtime_registry_compatibility.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-jar-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/org.objectweb.asm_3.3.1.v201105211655.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
