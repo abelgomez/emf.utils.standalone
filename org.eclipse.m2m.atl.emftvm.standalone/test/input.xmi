@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:class="Class">
+  <class:Class name="randmineoxyrfaca" isAbstract="true"/>
+  <class:Class name="morycillynot"/>
+  <class:Class name="shoustacyprelach">
+    <attr name="hampu" type="/2"/>
+    <attr name="tbope" type="/5"/>
+    <attr name="ecruartmastamprusextrong" type="/14"/>
+  </class:Class>
+  <class:Class name="sucky">
+    <attr name="viliacaputopelobalbrak" type="/14"/>
+    <attr name="menterova" type="/7"/>
+    <attr name="oodingenteastonfu" multiValued="true" type="/13"/>
+    <attr name="crablognonetrung" type="/3"/>
+    <attr name="fullysbursoneteept" type="/3"/>
+    <attr name="ftchagnestice" type="/10"/>
+    <attr name="entoggentactograduezoner" type="/5"/>
+    <attr name="unsevalleaffireparbo" type="/10"/>
+  </class:Class>
+  <class:Class name="iscrionell">
+    <attr name="dwakupt" multiValued="true" type="/8"/>
+    <attr name="amellymagorkiringearra" type="/6"/>
+    <attr name="lmartmadenurbite" multiValued="true" type="/3"/>
+    <attr name="herrain" multiValued="true" type="/8"/>
+  </class:Class>
+  <class:Class name="indellandif" isAbstract="true"/>
+  <class:Class name="fre">
+    <attr name="squidtorierabolo" type="/15"/>
+    <attr name="int" multiValued="true" type="/9"/>
+    <attr name="evendemption" type="/12"/>
+    <attr name="initualsistewpond" type="/2"/>
+    <attr name="erseakee" multiValued="true" type="/4"/>
+    <attr name="rre" multiValued="true" type="/3"/>
+    <attr name="varduawfoadsid" multiValued="true" type="/0"/>
+  </class:Class>
+  <class:Class name="cherging">
+    <attr name="iabeggstrili" type="/0"/>
+    <attr name="ostagntheadiumenianaph" multiValued="true" type="/2"/>
+    <attr name="otaphi" multiValued="true" type="/12"/>
+    <attr name="ypieginaterrithakestutio" type="/7"/>
+  </class:Class>
+  <class:DataType name="alecetr"/>
+  <class:DataType name="dest"/>
+  <class:DataType name="anc"/>
+  <class:DataType name="ean"/>
+  <class:DataType name="omesolloriftesitass"/>
+  <class:DataType name="matickbounetyprif"/>
+  <class:DataType name="eliquar"/>
+  <class:DataType name="ive"/>
+</xmi:XMI>

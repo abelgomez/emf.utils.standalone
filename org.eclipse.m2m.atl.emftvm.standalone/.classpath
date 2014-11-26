@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="lib/javax.annotation_1.2.0.v201401042248.jar"/>
+	<classpathentry kind="lib" path="lib/javax.inject_1.0.0.v20091030.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.jobs_3.6.0.v20140424-0053.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.resources_3.9.0.v20140514-1307.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.common_2.10.1.v20140901-1043.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore_2.10.1.v20140901-1043.jar" sourcepath="C:/Eclipse/eclipse-SDK-4.4-win32-x86_64/eclipse/plugins/org.eclipse.emf.ecore.source_2.10.1.v20140901-1043.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore.xmi_2.10.1.v20140901-1043.jar" sourcepath="C:/Eclipse/eclipse-SDK-4.4-win32-x86_64/eclipse/plugins/org.eclipse.emf.ecore.xmi.source_2.10.1.v20140901-1043.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.validation_1.8.0.201405281429.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.app_1.3.200.v20130910-1609.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.registry_3.5.400.v20140428-1507.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.m2m.atl.common_3.5.0.v201405260755.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.m2m.atl.emftvm_3.5.0.v201405260755.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.m2m.atl.emftvm.trace_3.5.0.v201405260755.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.10.0.v20140606-1445.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.osgi.compatibility.state_1.0.0.v20140403-1907.jar"/>
+	<classpathentry kind="lib" path="lib/org.objectweb.asm_5.0.1.v201404251740.jar"/>
+	<classpathentry kind="lib" path="lib/runtime_registry_compatibility.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-jar-1.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

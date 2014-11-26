@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns="Relational">
+  <Table name="randmineoxyrfaca" key="/0/@col.0">
+    <col name="objectId" keyOf="/0" type="/8"/>
+  </Table>
+  <Table name="morycillynot" key="/1/@col.0">
+    <col name="objectId" keyOf="/1" type="/8"/>
+  </Table>
+  <Table name="shoustacyprelach" key="/2/@col.0">
+    <col name="objectId" keyOf="/2" type="/8"/>
+    <col name="hampuId" type="/8"/>
+    <col name="tbopeId" type="/8"/>
+    <col name="ecruartmastamprusextrong" type="/14"/>
+  </Table>
+  <Table name="sucky" key="/3/@col.0">
+    <col name="objectId" keyOf="/3" type="/8"/>
+    <col name="viliacaputopelobalbrak" type="/14"/>
+    <col name="menterovaId" type="/8"/>
+    <col name="crablognonetrungId" type="/8"/>
+    <col name="fullysbursoneteeptId" type="/8"/>
+    <col name="ftchagnestice" type="/10"/>
+    <col name="entoggentactograduezonerId" type="/8"/>
+    <col name="unsevalleaffireparbo" type="/10"/>
+  </Table>
+  <Table name="iscrionell" key="/4/@col.0">
+    <col name="objectId" keyOf="/4" type="/8"/>
+    <col name="amellymagorkiringearraId" type="/8"/>
+  </Table>
+  <Table name="indellandif" key="/5/@col.0">
+    <col name="objectId" keyOf="/5" type="/8"/>
+  </Table>
+  <Table name="fre" key="/6/@col.0">
+    <col name="objectId" keyOf="/6" type="/8"/>
+    <col name="squidtorierabolo" type="/15"/>
+    <col name="evendemption" type="/12"/>
+    <col name="initualsistewpondId" type="/8"/>
+  </Table>
+  <Table name="cherging" key="/7/@col.0">
+    <col name="objectId" keyOf="/7" type="/8"/>
+    <col name="iabeggstriliId" type="/8"/>
+    <col name="ypieginaterrithakestutioId" type="/8"/>
+  </Table>
+  <Type name="alecetr"/>
+  <Type name="dest"/>
+  <Type name="anc"/>
+  <Type name="ean"/>
+  <Type name="omesolloriftesitass"/>
+  <Type name="matickbounetyprif"/>
+  <Type name="eliquar"/>
+  <Type name="ive"/>
+  <Table name="sucky_oodingenteastonfu">
+    <col name="suckyId" type="/8"/>
+    <col name="oodingenteastonfu" type="/13"/>
+  </Table>
+  <Table name="iscrionell_dwakupt">
+    <col name="iscrionellId" type="/8"/>
+    <col name="dwakupt" type="/8"/>
+  </Table>
+  <Table name="iscrionell_herrain">
+    <col name="iscrionellId" type="/8"/>
+    <col name="herrain" type="/8"/>
+  </Table>
+  <Table name="fre_int">
+    <col name="freId" type="/8"/>
+    <col name="int" type="/9"/>
+  </Table>
+  <Table name="cherging_otaphi">
+    <col name="chergingId" type="/8"/>
+    <col name="otaphi" type="/12"/>
+  </Table>
+  <Table name="iscrionell_lmartmadenurbite">
+    <col name="iscrionellId" type="/8"/>
+    <col name="lmartmadenurbiteId" type="/8"/>
+  </Table>
+  <Table name="fre_erseakee">
+    <col name="freId" type="/8"/>
+    <col name="erseakeeId" type="/8"/>
+  </Table>
+  <Table name="fre_rre">
+    <col name="freId" type="/8"/>
+    <col name="rreId" type="/8"/>
+  </Table>
+  <Table name="fre_varduawfoadsid">
+    <col name="freId" type="/8"/>
+    <col name="varduawfoadsidId" type="/8"/>
+  </Table>
+  <Table name="cherging_ostagntheadiumenianaph">
+    <col name="chergingId" type="/8"/>
+    <col name="ostagntheadiumenianaphId" type="/8"/>
+  </Table>
+</xmi:XMI>
