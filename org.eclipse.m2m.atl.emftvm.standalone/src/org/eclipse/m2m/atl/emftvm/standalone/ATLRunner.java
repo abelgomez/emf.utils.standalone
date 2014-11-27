@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Level;
 
+import jline.TerminalFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -148,7 +150,11 @@ public class ATLRunner {
 			System.err.println(e.getLocalizedMessage());
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.setOptionComparator(new OptionComarator<Option>());
-			formatter.setWidth(80);
+			try {
+				formatter.setWidth(Math.max(TerminalFactory.get().getWidth(), 80));
+			} catch (Throwable t) {
+				// Nothing to do...
+			};
 			formatter.printHelp("java -jar <this-file.jar>", options, true);
 		}
 		
@@ -191,12 +197,12 @@ public class ATLRunner {
 		Option outputOpt = OptionBuilder.create(OUTPUT_MODEL);
 		outputOpt.setLongOpt(OUTPUT_MODEL_LONG);
 		outputOpt.setArgName("path_to_output.xmi");
-		outputOpt.setDescription("Output file");
+		outputOpt.setDescription("Output file (optional, defaults to <input>.out.xmi)");
 		outputOpt.setArgs(1);
 
 		Option quietOption = OptionBuilder.create(QUIET);
 		quietOption.setLongOpt(QUIET_LONG);
-		quietOption.setDescription("Do not print any information about the transformation execution on the standard output");
+		quietOption.setDescription("Do not print any information about the transformation execution on the standard output (optional, defaults to false)");
 		quietOption.setArgs(0);
 
 		options.addOption(transformationOpt);
