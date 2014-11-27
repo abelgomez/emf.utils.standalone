@@ -37,18 +37,18 @@ import org.eclipse.m2m.atl.emftvm.util.TimingData;
 
 public class ATLRunner {
 	
-	public static String TRANSFORMATION 		= "f";
-	public static String TRANSFORMATION_LONG 	= "file";
-	public static String SOURCE_METAMODEL 		= "s";
-	public static String SOURCE_METAMODEL_LONG 	= "source-metamodel";
-	public static String TARGET_METAMODEL 		= "t";
-	public static String TARGET_METAMODEL_LONG 	= "target-metamodel";
-	public static String INPUT_MODEL 			= "i";
-	public static String INPUT_MODEL_LONG 		= "input";
-	public static String OUTPUT_MODEL 			= "o";
-	public static String OUTPUT_MODEL_LONG 		= "output";
-	public static String QUIET 					= "q";
-	public static String QUIET_LONG 			= "quiet";
+	private static final String TRANSFORMATION 			= "f";
+	private static final String TRANSFORMATION_LONG 	= "file";
+	private static final String SOURCE_METAMODEL 		= "s";
+	private static final String SOURCE_METAMODEL_LONG 	= "source-metamodel";
+	private static final String TARGET_METAMODEL 		= "t";
+	private static final String TARGET_METAMODEL_LONG 	= "target-metamodel";
+	private static final String INPUT_MODEL 			= "i";
+	private static final String INPUT_MODEL_LONG 		= "input";
+	private static final String OUTPUT_MODEL 			= "o";
+	private static final String OUTPUT_MODEL_LONG 		= "output";
+	private static final String QUIET 					= "q";
+	private static final String QUIET_LONG 				= "quiet";
 	
 	private static class OptionComarator<T extends Option> implements Comparator<T> {
 	    private static final String OPTS_ORDER = "fstioq";
