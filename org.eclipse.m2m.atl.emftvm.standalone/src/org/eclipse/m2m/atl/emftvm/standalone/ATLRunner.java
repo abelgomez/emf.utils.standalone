@@ -6,15 +6,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.logging.Handler;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -36,8 +37,8 @@ import org.eclipse.m2m.atl.emftvm.util.TimingData;
 
 public class ATLRunner {
 	
-	public static String TRANSFORMATION 		= "v";
-	public static String TRANSFORMATION_LONG 	= "transformation";
+	public static String TRANSFORMATION 		= "f";
+	public static String TRANSFORMATION_LONG 	= "file";
 	public static String SOURCE_METAMODEL 		= "s";
 	public static String SOURCE_METAMODEL_LONG 	= "source-metamodel";
 	public static String TARGET_METAMODEL 		= "t";
@@ -46,11 +47,11 @@ public class ATLRunner {
 	public static String INPUT_MODEL_LONG 		= "input";
 	public static String OUTPUT_MODEL 			= "o";
 	public static String OUTPUT_MODEL_LONG 		= "output";
-	public static String TIMING 				= "T";
-	public static String TIMING_LONG 			= "timing";
+	public static String QUIET 					= "q";
+	public static String QUIET_LONG 			= "quiet";
 	
 	private static class OptionComarator<T extends Option> implements Comparator<T> {
-	    private static final String OPTS_ORDER = "vstioT";
+	    private static final String OPTS_ORDER = "fstioq";
 
 	    public int compare(T o1, T o2) {
 	        return OPTS_ORDER.indexOf(o1.getOpt()) - OPTS_ORDER.indexOf(o2.getOpt());
@@ -63,12 +64,20 @@ public class ATLRunner {
 
 		configureOptions(options);
 
-		CommandLineParser parser = new PosixParser();
+		CommandLineParser parser = new GnuParser();
 
 		try {
 			
 			CommandLine commandLine = parser.parse(options, args);
 
+			// Disable logging if in quiet mode
+			if (commandLine.hasOption(QUIET)) {
+				Handler[] handlers = ATLLogger.getLogger().getHandlers();
+				for(Handler handler : handlers) {
+					ATLLogger.getLogger().removeHandler(handler);
+				}
+			}
+			
 			String transformationLocation = commandLine.getOptionValue(TRANSFORMATION);
 			
 			String sourcemmLocation = commandLine.getOptionValue(SOURCE_METAMODEL);
@@ -133,10 +142,8 @@ public class ATLRunner {
 			env.run(td);
 			td.finish();
 			
-			if (commandLine.hasOption(TIMING)) {
-				ATLLogger.info(td.toString());
-			}
-			
+			ATLLogger.info(td.toString());
+
 			// Save models
 			output.getResource().save(Collections.emptyMap());
 			
@@ -190,9 +197,9 @@ public class ATLRunner {
 		outputOpt.setDescription("Output file");
 		outputOpt.setArgs(1);
 
-		Option timingOption = OptionBuilder.create(TIMING);
-		timingOption.setLongOpt(TIMING_LONG);
-		timingOption.setDescription("Enable timing logging");
+		Option timingOption = OptionBuilder.create(QUIET);
+		timingOption.setLongOpt(QUIET_LONG);
+		timingOption.setDescription("Do not print any information about the transformation execution on the standard output");
 		timingOption.setArgs(0);
 
 		options.addOption(transformationOpt);
