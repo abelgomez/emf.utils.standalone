@@ -83,7 +83,13 @@ public class ATLRunner {
 			String targetmmLocation = commandLine.getOptionValue(TARGET_METAMODEL);
 			
 			String inputLocation = commandLine.getOptionValue(INPUT_MODEL);
-			String outputLocation = commandLine.getOptionValue(OUTPUT_MODEL, Paths.get(inputLocation).resolve(".out.xmi").toString());
+			String outputLocation = commandLine.getOptionValue(OUTPUT_MODEL,
+					(
+						inputLocation.indexOf('.') >= 0 ? 
+								inputLocation.substring(0, inputLocation.lastIndexOf('.')) 
+								:
+								inputLocation
+					) + ".out.xmi");
 			
 			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
@@ -96,39 +102,73 @@ public class ATLRunner {
 			Module module = (Module) transformationResource.getContents().get(0);
 			
 			String moduleName = module.getName();
-			String sourcemmName = module.getInputModels().get(0).getMetaModelName();
-			String targetmmName = module.getOutputModels().get(0).getMetaModelName();
-			String inputName = module.getInputModels().get(0).getModelName();
-			String outputName = module.getOutputModels().get(0).getModelName();
+			
+			String sourcemmName = null;
+			String inputName = null;
+			if (!module.getInputModels().isEmpty()) {
+				sourcemmName = module.getInputModels().get(0).getMetaModelName();
+				inputName = module.getInputModels().get(0).getModelName();
+			}
+			
+			String targetmmName = null;
+			String outputName = null;
+			if (!module.getOutputModels().isEmpty()) {
+				targetmmName = module.getOutputModels().get(0).getMetaModelName();
+				outputName = module.getOutputModels().get(0).getModelName();
+			}
+
+			String inoutName = null;
+			if (!module.getInoutModels().isEmpty()) {
+				sourcemmName = module.getInoutModels().get(0).getMetaModelName();
+				targetmmName = module.getInoutModels().get(0).getMetaModelName();
+				inoutName = module.getInoutModels().get(0).getModelName();
+			}
+			
 			
 			ExecEnv env = EmftvmFactory.eINSTANCE.createExecEnv();
 			
 			// Source metamodel
-			URI sourcemmUri = URI.createURI(sourcemmLocation);
-			Metamodel sourcemm = EmftvmFactory.eINSTANCE.createMetamodel();
-			sourcemm.setResource(resourceSet.getResource(sourcemmUri, true));
-			env.registerMetaModel(sourcemmName, sourcemm);
-			registerPackages(resourceSet, sourcemm.getResource());
+			if (sourcemmName != null) {
+				URI sourcemmUri = URI.createURI(sourcemmLocation);
+				Metamodel sourcemm = EmftvmFactory.eINSTANCE.createMetamodel();
+				sourcemm.setResource(resourceSet.getResource(sourcemmUri, true));
+				env.registerMetaModel(sourcemmName, sourcemm);
+				registerPackages(resourceSet, sourcemm.getResource());
+			}
 
 			// Target metamodel
-			URI targetmmUri = URI.createURI(targetmmLocation);
-			Metamodel targetmm = EmftvmFactory.eINSTANCE.createMetamodel();
-			targetmm.setResource(resourceSet.getResource(targetmmUri, true));
-			env.registerMetaModel(targetmmName, targetmm);
-			registerPackages(resourceSet, targetmm.getResource());
+			if (targetmmName != null) {
+				URI targetmmUri = URI.createURI(targetmmLocation);
+				Metamodel targetmm = EmftvmFactory.eINSTANCE.createMetamodel();
+				targetmm.setResource(resourceSet.getResource(targetmmUri, true));
+				env.registerMetaModel(targetmmName, targetmm);
+				registerPackages(resourceSet, targetmm.getResource());
+			}
 
 			// Input model
-			URI inputUri = URI.createURI(inputLocation, true);
-			Model input = EmftvmFactory.eINSTANCE.createModel();
-			input.setResource(resourceSet.getResource(inputUri, true));
-			env.registerInputModel(inputName, input);
+			if (inputName != null) {
+				URI inputUri = URI.createURI(inputLocation, true);
+				Model input = EmftvmFactory.eINSTANCE.createModel();
+				input.setResource(resourceSet.getResource(inputUri, true));
+				env.registerInputModel(inputName, input);
+			}
 
 			// Output model
-			URI outputUri = URI.createFileURI(outputLocation);
-			Model output = EmftvmFactory.eINSTANCE.createModel();
-			output.setResource(resourceSet.createResource(outputUri));
-			env.registerOutputModel(outputName, output);
+			if (outputName != null) {
+				URI outputUri = URI.createFileURI(outputLocation);
+				Model output = EmftvmFactory.eINSTANCE.createModel();
+				output.setResource(resourceSet.createResource(outputUri));
+				env.registerOutputModel(outputName, output);
+			}
 
+			// Inout model
+			if (inoutName != null) {
+				URI inoutUri = URI.createFileURI(inputLocation);
+				Model inout = EmftvmFactory.eINSTANCE.createModel();
+				inout.setResource(resourceSet.createResource(inoutUri));
+				env.registerInOutModel(inoutName, inout);
+			}
+			
 			// Load and run module
 			Path transformationPath = Paths.get(transformationLocation);
 			String parentLocation = (transformationPath.getParent() != null ? transformationPath.getParent().toString() : ".") + File.separator;
@@ -144,7 +184,12 @@ public class ATLRunner {
 			ATLLogger.info(td.toString());
 
 			// Save models
-			output.getResource().save(Collections.emptyMap());
+			for (Model model : env.getOutputModels().values()) {
+				model.getResource().save(Collections.emptyMap());
+			}
+			for (Model model : env.getInoutModels().values()) {
+				model.getResource().save(Collections.emptyMap());
+			}
 			
 		} catch (ParseException e) {
 			System.err.println(e.getLocalizedMessage());
