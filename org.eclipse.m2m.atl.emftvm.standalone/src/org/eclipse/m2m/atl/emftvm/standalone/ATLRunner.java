@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.logging.Handler;
+import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -72,10 +72,7 @@ public class ATLRunner {
 
 			// Disable logging if in quiet mode
 			if (commandLine.hasOption(QUIET)) {
-				Handler[] handlers = ATLLogger.getLogger().getHandlers();
-				for(Handler handler : handlers) {
-					ATLLogger.getLogger().removeHandler(handler);
-				}
+				ATLLogger.getLogger().setLevel(Level.OFF);
 			}
 			
 			String transformationLocation = commandLine.getOptionValue(TRANSFORMATION);
@@ -197,17 +194,17 @@ public class ATLRunner {
 		outputOpt.setDescription("Output file");
 		outputOpt.setArgs(1);
 
-		Option timingOption = OptionBuilder.create(QUIET);
-		timingOption.setLongOpt(QUIET_LONG);
-		timingOption.setDescription("Do not print any information about the transformation execution on the standard output");
-		timingOption.setArgs(0);
+		Option quietOption = OptionBuilder.create(QUIET);
+		quietOption.setLongOpt(QUIET_LONG);
+		quietOption.setDescription("Do not print any information about the transformation execution on the standard output");
+		quietOption.setArgs(0);
 
 		options.addOption(transformationOpt);
 		options.addOption(sourcemmOpt);
 		options.addOption(targetmmOpt);
 		options.addOption(inputOpt);
 		options.addOption(outputOpt);
-		options.addOption(timingOption);
+		options.addOption(quietOption);
 	}
 	
 	private static void registerPackages(ResourceSet rs, Resource resource) {
