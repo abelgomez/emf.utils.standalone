@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import jline.TerminalFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -129,7 +131,11 @@ public class SpecimenGenerator {
 			System.err.println(e.getLocalizedMessage());
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.setOptionComparator(new OptionComarator<Option>());
-			formatter.setWidth(80);
+			try {
+				formatter.setWidth(Math.max(TerminalFactory.get().getWidth(), 80));
+			} catch (Throwable t) {
+				// Nothing to do...
+			};
 			formatter.printHelp("java -jar <this-file.jar>", options, true);
 		}
 	}
