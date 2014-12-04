@@ -16,7 +16,9 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.primitives.Primitives.isWrapperType;
 import static com.google.common.primitives.Primitives.unwrap;
 
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +40,11 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ArrayListMultimap;
@@ -60,20 +65,22 @@ import fr.inria.atlanmod.instantiator.util.UniformLongDistribution;
  */
 public class SpecimenGenerator {
 
-	private static final String METAMODEL 		= "m";
-	private static final String METAMODEL_LONG 	= "metamodel";
-	private static final String OUTPUT_DIR 		= "o";
-	private static final String OUTPUT_DIR_LONG	= "output-dir";
-	private static final String N_MODELS		= "n";
-	private static final String N_MODELS_LONG	= "number-models";
-	private static final String SIZE 			= "s";
-	private static final String SIZE_LONG		= "size";
-	private static final String SEED 			= "e";
-	private static final String SEED_LONG 		= "seed";
+	private static final String METAMODEL 					= "m";
+	private static final String METAMODEL_LONG 				= "metamodel";
+	private static final String ADDITIONAL_METAMODEL 		= "a";
+	private static final String ADDITIONAL_METAMODEL_LONG 	= "additional-metamodel";
+	private static final String OUTPUT_DIR 					= "o";
+	private static final String OUTPUT_DIR_LONG				= "output-dir";
+	private static final String N_MODELS					= "n";
+	private static final String N_MODELS_LONG				= "number-models";
+	private static final String SIZE 						= "s";
+	private static final String SIZE_LONG					= "size";
+	private static final String SEED 						= "e";
+	private static final String SEED_LONG 					= "seed";
 
 
 	private static class OptionComarator<T extends Option> implements Comparator<T> {
-	    private static final String OPTS_ORDER = "monse";
+	    private static final String OPTS_ORDER = "maonse";
 
 	    @Override
 		public int compare(T o1, T o2) {
@@ -89,7 +96,7 @@ public class SpecimenGenerator {
 	private long currentDepth;
 	private long currentMaxDepth;
 
-	public static void main(String[] args) throws GenerationException {
+	public static void main(String[] args) throws GenerationException, IOException {
 
 		Options options = new Options();
 
@@ -102,6 +109,14 @@ public class SpecimenGenerator {
 
 			String metamodel = commandLine.getOptionValue(METAMODEL);
 			DefaultModelGenerator modelGen = new DefaultModelGenerator(URI.createFileURI(metamodel));
+
+			for (String additionalMetamodel : commandLine.getOptionValues(ADDITIONAL_METAMODEL)) {
+				URI additionalMetamodelUri = URI.createFileURI(additionalMetamodel);
+				Resource resource = new XMIResourceImpl(additionalMetamodelUri);
+				resource.load(Collections.emptyMap());
+				registerPackages(resource);
+			}
+
 			if (commandLine.hasOption(OUTPUT_DIR)) {
 				String outDir = commandLine.getOptionValue(OUTPUT_DIR);
 				modelGen.setSamplesPath(Paths.get(outDir));
@@ -153,6 +168,12 @@ public class SpecimenGenerator {
 		metamodelOpt.setArgs(1);
 		metamodelOpt.setRequired(true);
 
+		Option additionalMetamodelOpt = OptionBuilder.create(ADDITIONAL_METAMODEL);
+		additionalMetamodelOpt.setLongOpt(ADDITIONAL_METAMODEL_LONG);
+		additionalMetamodelOpt.setArgName("path_to_metamodel.ecore");
+		additionalMetamodelOpt.setDescription("Additional ecore metamodel(s) that need to be registered");
+		additionalMetamodelOpt.setArgs(Option.UNLIMITED_VALUES);
+
 		Option outDirOpt = OptionBuilder.create(OUTPUT_DIR);
 		outDirOpt.setLongOpt(OUTPUT_DIR_LONG);
 		outDirOpt.setArgName("path_to_output.dir");
@@ -181,10 +202,23 @@ public class SpecimenGenerator {
 		seedOption.setArgs(1);
 
 		options.addOption(metamodelOpt);
+		options.addOption(additionalMetamodelOpt);
 		options.addOption(outDirOpt);
 		options.addOption(nModelsOpt);
 		options.addOption(sizeOption);
 		options.addOption(seedOption);
+	}
+
+	/**
+	 * Registers the packages
+	 * @param resource
+	 */
+	public static void registerPackages(Resource resource) {
+		EObject eObject = resource.getContents().get(0);
+		if (eObject instanceof EPackage) {
+			EPackage p = (EPackage) eObject;
+			EPackage.Registry.INSTANCE.put(p.getNsURI(), p);
+		}
 	}
 
 	public SpecimenGenerator(ISpecimenConfiguration configuration) {
