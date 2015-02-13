@@ -11,6 +11,7 @@
 
 	<property name="vmargs" value="-Dfile.encoding=utf-8 -Xmx4g" />
 
+	<!-- The files.zip file can be downloaded from https://issicloud.dsic.upv.es/owncloud/index.php/s/1F6RUbXF29QY6s3 -->
 	<target name="extract.files">
 		<if>
 			<not>
