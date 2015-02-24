@@ -17,12 +17,17 @@ import static com.google.common.primitives.Primitives.isWrapperType;
 import static com.google.common.primitives.Primitives.unwrap;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jline.TerminalFactory;
 
@@ -110,11 +115,13 @@ public class SpecimenGenerator {
 			String metamodel = commandLine.getOptionValue(METAMODEL);
 			DefaultModelGenerator modelGen = new DefaultModelGenerator(URI.createFileURI(metamodel));
 
-			for (String additionalMetamodel : commandLine.getOptionValues(ADDITIONAL_METAMODEL)) {
-				URI additionalMetamodelUri = URI.createFileURI(additionalMetamodel);
-				Resource resource = new XMIResourceImpl(additionalMetamodelUri);
-				resource.load(Collections.emptyMap());
-				registerPackages(resource);
+			if (commandLine.hasOption(ADDITIONAL_METAMODEL)) {
+				for (String additionalMetamodel : commandLine.getOptionValues(ADDITIONAL_METAMODEL)) {
+					URI additionalMetamodelUri = URI.createFileURI(additionalMetamodel);
+					Resource resource = new XMIResourceImpl(additionalMetamodelUri);
+					resource.load(Collections.emptyMap());
+					registerPackages(resource);
+				}
 			}
 
 			if (commandLine.hasOption(OUTPUT_DIR)) {
@@ -244,7 +251,7 @@ public class SpecimenGenerator {
 			currentMaxDepth = c.getDepthDistributionFor(eClass).sample();
 			long nbInstance = c.getRootDistributionFor(eClass).sample();
 			for (int i = 0; i < nbInstance; i++) {
-
+				log(MessageFormat.format("Generating EObject {0} out of {1}", i+1, nbInstance));
 				Optional<EObject> generateEObject = generateEObject(eClass, indexByKind);
 				if (generateEObject.isPresent()) {
 					ret.add(generateEObject.get());
@@ -254,7 +261,9 @@ public class SpecimenGenerator {
 
 		// System.out.println("Generating XRef");
 
-		for (EObject eObjectRoot : ret) {
+		for (int i = 0; i < ret.size(); i++) {
+			EObject eObjectRoot = ret.get(i);
+			log(MessageFormat.format("Generating cross references for EObject {0} out of {1}", i+1, ret.size()));
 			TreeIterator<EObject> eAllContents = eObjectRoot.eAllContents();
 			while (eAllContents.hasNext()) {
 				EObject eObject = eAllContents.next();
@@ -474,6 +483,21 @@ public class SpecimenGenerator {
 	private Object nextObject(Class<?> instanceClass) {
 		if (instanceClass == String.class) {
 			return Gpw.generate(generator.nextInt(24) + 1);
+		} else if (Number.class.isAssignableFrom(instanceClass)) {
+			try {
+				Method method = instanceClass.getMethod("valueOf", long.class);
+				return method.invoke(null, Gpw.generate(generator.nextInt(24) + 1).hashCode());
+			} catch (IllegalAccessException e) {
+				log(e.getLocalizedMessage());
+			} catch (NoSuchMethodException e) {
+				log(e.getLocalizedMessage());
+			} catch (SecurityException e) {
+				log(e.getLocalizedMessage());
+			} catch (IllegalArgumentException e) {
+				log(e.getLocalizedMessage());
+			} catch (InvocationTargetException e) {
+				log(e.getLocalizedMessage());
+			}
 		} else {
 			log("Do not know how to randomly generate " + instanceClass.getName() + " object");
 		}
@@ -484,7 +508,7 @@ public class SpecimenGenerator {
 	 * @param string
 	 */
 	private void log(String string) {
-		System.out.println(string);
+		Logger.getGlobal().log(Level.INFO, string);
 	}
 
 	/**
