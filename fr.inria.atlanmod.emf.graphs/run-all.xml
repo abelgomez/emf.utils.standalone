@@ -1,0 +1,50 @@
+<?eclipse.ant.import ?>
+<project basedir="." name="connectedness">
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	  <classpath>
+	    <pathelement location="${basedir}/lib/ant-contrib.jar"/>
+	  </classpath>
+	</taskdef>
+
+	<property name="files.dir" value="files"/>
+	<property name="metamodel" value="${files.dir}/IFC2X3_TC1.ecore"/>
+
+	<property name="vmargs" value="-Dfile.encoding=utf-8 -Xmx4g" />
+
+	<!-- The files.zip file can be downloaded from https://issicloud.dsic.upv.es/owncloud/index.php/s/1F6RUbXF29QY6s3 -->
+	<target name="extract.files">
+		<if>
+			<not>
+				<available file="${files.dir}" type="dir"/>
+			</not>
+			<then>
+				<unzip src="${basedir}/files.zip" dest="${basedir}"/>
+			</then>
+		</if>
+	</target>
+	
+    <target name="run">
+		<echo>Analyzing ${xmi.file}</echo>
+        <java classname="fr.inria.atlanmod.emf.graphs.Connectedness" failonerror="false" fork="yes">
+        	<jvmarg line="${vmargs}"/>
+            <arg value="-m"/>
+            <arg value="${metamodel}"/>
+            <arg value="-i"/>
+            <arg value="${xmi.file}"/>
+            <classpath refid="fr.inria.atlanmod.emf.graphs.classpath"/>
+        </java>
+    </target>
+	
+	
+	<target name="run.all" description="Runs the connectedness application for all files in the 'files' directory" depends="extract.files">
+		<foreach inheritall="true" target="run" param="xmi.file">
+			<path>
+				<fileset dir="${files.dir}">
+					<include name="**/*.xmi"/>
+				</fileset>
+			</path>
+		</foreach>
+	</target>
+	
+  </project>
+
