@@ -10,12 +10,6 @@
  *******************************************************************************/
 package fr.inria.atlanmod.instantiator;
 
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.primitives.Primitives.isWrapperType;
-import static com.google.common.primitives.Primitives.unwrap;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,7 +49,11 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.primitives.Primitives;
 
 import fr.inria.atlanmod.instantiator.exceptions.GenerationException;
 import fr.inria.atlanmod.instantiator.impl.DefaultModelGenerator;
@@ -241,7 +239,7 @@ public class SpecimenGenerator {
 
 	public List<EObject> generate(ResourceSet resourceSet) {
 		Gpw.setSeed(c.getSeed());
-		List<EObject> ret = newArrayList();
+		List<EObject> ret = Lists.newArrayList();
 		ListMultimap<EClass, EObject> indexByKind = ArrayListMultimap.create();
 
 		currentDepth = 0;
@@ -271,7 +269,7 @@ public class SpecimenGenerator {
 			}
 		}
 
-		Map<EClass, Long> resourcesSize = newHashMap();
+		Map<EClass, Long> resourcesSize = Maps.newHashMap();
 		for (EClass eClass : c.possibleRootEClasses()) {
 			setNextResourceSizeForType(resourcesSize, eClass);
 		}
@@ -385,7 +383,7 @@ public class SpecimenGenerator {
 																						// ==
 																						// 1
 			int idx = generator.nextInt(eAllConcreteSubTypesOrSelf.size());
-			final Optional<EObject> nextEObject = generateEObject(get(eAllConcreteSubTypesOrSelf, idx), indexByKind);
+			final Optional<EObject> nextEObject = generateEObject(Iterables.get(eAllConcreteSubTypesOrSelf, idx), indexByKind);
 			if (nextEObject.isPresent()) {
 				eObject.eSet(eReference, nextEObject.get());
 			}
@@ -404,7 +402,7 @@ public class SpecimenGenerator {
 		} while (sample < eReference.getLowerBound());
 		for (int i = 0; i < sample; i++) {
 			int idx = generator.nextInt(eAllConcreteSubTypesOrSelf.size());
-			final Optional<EObject> nextEObject = generateEObject(get(eAllConcreteSubTypesOrSelf, idx), indexByKind);
+			final Optional<EObject> nextEObject = generateEObject(Iterables.get(eAllConcreteSubTypesOrSelf, idx), indexByKind);
 			if (nextEObject.isPresent()) {
 				values.add(nextEObject.get());
 			}
@@ -468,8 +466,8 @@ public class SpecimenGenerator {
 
 	private Object nextValue(Class<?> instanceClass) {
 		final Object value;
-		if (instanceClass.isPrimitive() || isWrapperType(instanceClass)) {
-			value = nextPrimitive(unwrap(instanceClass));
+		if (instanceClass.isPrimitive() || Primitives.isWrapperType(instanceClass)) {
+			value = nextPrimitive(Primitives.unwrap(instanceClass));
 		} else {
 			value = nextObject(instanceClass);
 		}
